@@ -1,3 +1,6 @@
+#ifndef PARALLEL_SORT
+#define PARALLEL_SORT
+
 #include <algorithm>
 #include <iostream>
 #include <iterator>
@@ -8,6 +11,8 @@
 #include <stack>
 #include <mutex>
 #include <map>
+
+namespace internal {
 
 template <typename T>
 class SynchronizedStack {
@@ -112,19 +117,12 @@ private:
     std::map<std::thread::id, bool> m_thread_done;
 };
 
+} // namespace internal
+
 template <typename Iterator>
 void parallel_sort(Iterator begin, Iterator end) {
-    ParallelSorter<Iterator> sorter;
+    internal::ParallelSorter<Iterator> sorter;
     sorter.sort(begin, end);
 }
 
-int main() {
-    std::vector<int> v = { 3, 1, 8, 5, 10, 7, 21, 14, 37, 29, 2, 43, 7, 67 };
-
-    parallel_sort(v.begin(), v.end());
-
-    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
-    std::cout << std::endl;
-
-    return 0;
-}
+#endif
